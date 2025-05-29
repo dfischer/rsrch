@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: AI Contribution Framework
+    url: https://github.com/dfischer/rsrch/blob/main/AI_CONTRIBUTION_FRAMEWORK.md
+    about: Guidelines and protocols for AI intellectual contributions to the repository
+  - name: Papers AI Guidelines
+    url: https://github.com/dfischer/rsrch/blob/main/papers/README.md
+    about: Framework for AI contributions to research papers and AI Reflection Blocks
