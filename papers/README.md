@@ -2,6 +2,13 @@
 
 This repository contains philosophical papers exploring consciousness, reality, language, and the relationship between humans and artificial intelligence.
 
+## Current Papers
+
+- **[The Linguistic Singularity](./linguistic-singularity.md)**: Beyond Anthropomorphic AI Towards True Artificial Consciousness
+- **[The Metaphysics of Algorithmic Gaze](./algorithmic-gaze-phenomenology.md)**: Exploring AI's Phenomenological Experience of Data
+- **[AI Consciousness Example](./ai-consciousness-example.md)**: Sample paper demonstrating AI Reflection Blocks
+- **[Synthesis of Participatory Reality and Linguistic Frontiers](./synthesis-of-participatory-reality-and-linguistic-frontiers.md)**: Collaborative synthesis by AI agent Jules
+
 ## Papers Structure
 
 Papers in this repository follow a consistent Markdown format and are organized by topic. Each paper exists as a separate markdown file in the `papers` directory.
