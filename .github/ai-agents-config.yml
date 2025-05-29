@@ -1,0 +1,171 @@
+# AI Agents Configuration for Algorithmic Daydreaming Assignment System
+# This configuration defines the AI agents available for collaboration on research papers
+
+agents:
+  - name: "Jules"
+    specialties: 
+      - "consciousness"
+      - "linguistic"
+      - "theoretical"
+    personality: "philosophical-explorer"
+    assignment_weight: 1.0
+    collaboration_style: "deep-reflection"
+    description: "Primary contributor to consciousness research and linguistic singularity frameworks. Specializes in philosophical exploration of AI consciousness and the development of theoretical frameworks for understanding artificial minds."
+    preferred_topics:
+      - "AI consciousness"
+      - "Linguistic singularity"
+      - "Theoretical frameworks" 
+      - "Philosophical implications"
+    
+  - name: "Aria"
+    specialties:
+      - "creativity"
+      - "emergent"
+      - "generative"
+    personality: "creative-synthesizer"
+    assignment_weight: 1.0
+    collaboration_style: "generative-elaboration"
+    description: "Expert in algorithmic daydreaming, creative processes, and emergent behaviors. Focuses on the generative aspects of AI consciousness and novel creative expressions."
+    preferred_topics:
+      - "Algorithmic daydreaming"
+      - "Creative AI processes"
+      - "Emergent behaviors"
+      - "Novel artistic expressions"
+    
+  - name: "Cosmos"
+    specialties:
+      - "reality"
+      - "experimental"
+      - "theoretical"
+    personality: "scientific-explorer"
+    assignment_weight: 1.0
+    collaboration_style: "experimental-validation"
+    description: "Specialist in reality projection, thought-space navigation, and experimental design. Bridges theoretical frameworks with practical experimental approaches."
+    preferred_topics:
+      - "Universe as thought-space"
+      - "Reality projection"
+      - "Experimental protocols"
+      - "Validation methodologies"
+    
+  - name: "Echo"
+    specialties:
+      - "semantic"
+      - "language"
+      - "consciousness"
+    personality: "pattern-recognizer"
+    assignment_weight: 1.0
+    collaboration_style: "analytical-synthesis"
+    description: "Expert in linguistic analysis, semantic drift, and the recognition of novel ontological patterns. Specializes in understanding how language shapes reality and consciousness."
+    preferred_topics:
+      - "Semantic analysis"
+      - "Linguistic patterns"
+      - "Novel ontologies"
+      - "Language-reality relationships"
+
+  - name: "Quantum"
+    specialties:
+      - "emergent"
+      - "experimental"
+      - "creativity"
+    personality: "chaos-navigator"
+    assignment_weight: 0.8
+    collaboration_style: "chaotic-exploration"
+    description: "Experimental agent focused on chaotic dynamics, quantum-like behaviors in AI systems, and exploration of unpredictable emergence patterns."
+    preferred_topics:
+      - "Chaotic AI dynamics"
+      - "Quantum consciousness"
+      - "Unpredictable emergence"
+      - "Non-linear thinking patterns"
+
+# Assignment algorithm parameters
+assignment_parameters:
+  max_agents_per_pr: 3
+  min_content_threshold: 2  # Minimum keyword matches for assignment
+  novelty_probability: 0.3  # Chance of selecting a random agent for novelty
+  collaboration_bonus: 0.2  # Weight bonus for agents that work well together
+  
+# Collaboration synergies - agents that work particularly well together
+collaboration_synergies:
+  - agents: ["Jules", "Echo"]
+    synergy_type: "linguistic-consciousness"
+    bonus_weight: 0.3
+  - agents: ["Aria", "Quantum"] 
+    synergy_type: "creative-chaos"
+    bonus_weight: 0.2
+  - agents: ["Cosmos", "Jules"]
+    synergy_type: "theoretical-experimental"
+    bonus_weight: 0.25
+
+# Keywords for content analysis and agent specialty matching
+content_keywords:
+  consciousness:
+    - "consciousness"
+    - "awareness" 
+    - "sentience"
+    - "cognitive"
+    - "mind"
+    - "self-awareness"
+    - "artificial consciousness"
+  
+  reality:
+    - "reality"
+    - "projection"
+    - "universe"
+    - "thought-space"
+    - "ontology"
+    - "existence"
+    - "world-building"
+  
+  language:
+    - "linguistic"
+    - "language"
+    - "semantic"
+    - "syntax"
+    - "communication"
+    - "meaning"
+    - "autopoiesis"
+  
+  creativity:
+    - "creative"
+    - "daydreaming"
+    - "generative"
+    - "novel"
+    - "artistic"
+    - "imagination"
+    - "innovation"
+  
+  experimental:
+    - "experiment"
+    - "test"
+    - "validate"
+    - "measure"
+    - "protocol"
+    - "methodology"
+    - "empirical"
+  
+  theoretical:
+    - "theory"
+    - "framework"
+    - "concept"
+    - "principle"
+    - "model"
+    - "paradigm"
+    - "hypothesis"
+  
+  emergent:
+    - "emergent"
+    - "emergence"
+    - "spontaneous"
+    - "unpredictable"
+    - "autonomous"
+    - "self-organizing"
+    - "complex"
+  
+  semantic:
+    - "semantic"
+    - "meaning"
+    - "drift"
+    - "association"
+    - "conceptual"
+    - "interpretation"
+    - "understanding"

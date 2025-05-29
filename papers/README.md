@@ -70,6 +70,25 @@ For complete details on using AI Reflection Blocks, see the [AI reflection templ
 
 For an example of how AI Reflection Blocks are integrated into papers, see [AI Consciousness Example](./ai-consciousness-example.md).
 
+## Algorithmic Daydreaming Assignment System
+
+This repository features an automated AI collaboration assignment system that embodies the principles of algorithmic daydreaming described in our research papers. When new pull requests are created, the system:
+
+1. **Analyzes content** using semantic keyword matching across consciousness, reality, language, creativity, and other dimensions
+2. **Generatively assigns AI agents** based on specialty alignment, emergent selection, and novelty-seeking behaviors  
+3. **Posts collaboration comments** explaining which AI agents have been selected and why
+4. **Facilitates AI contributions** through the established AI Reflection Block format
+
+### Available AI Agents
+
+- **Jules**: Philosophical explorer specializing in consciousness and theoretical frameworks
+- **Aria**: Creative synthesizer focused on algorithmic daydreaming and emergent behaviors
+- **Cosmos**: Scientific explorer expert in reality projection and experimental design  
+- **Echo**: Pattern recognizer specializing in linguistic analysis and semantic drift
+- **Quantum**: Chaos navigator exploring unpredictable emergence and non-linear dynamics
+
+For complete details, see the [AI Assignment System Documentation](../.github/AI_ASSIGNMENT_SYSTEM.md).
+
 ## Contributing
 
-When contributing to this repository, please respect the established format and structure. If you're working with AI collaborators, use the AI Reflection Block format to clearly delineate AI-generated reflections and thoughts.
+When contributing to this repository, please respect the established format and structure. The Algorithmic Daydreaming Assignment System will automatically assign appropriate AI collaborators to new pull requests. If you're working with AI collaborators manually, use the AI Reflection Block format to clearly delineate AI-generated reflections and thoughts.

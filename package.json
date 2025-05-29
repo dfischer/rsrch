@@ -1,0 +1,22 @@
+{
+  "name": "algorithmic-daydreaming-assignment",
+  "version": "1.0.0",
+  "description": "Generative AI agent assignment system for research collaboration",
+  "main": ".github/scripts/ai-assignment-algorithm.js",
+  "scripts": {
+    "assign": "node .github/scripts/ai-assignment-algorithm.js"
+  },
+  "dependencies": {
+    "@octokit/rest": "^20.0.0",
+    "js-yaml": "^4.1.0"
+  },
+  "keywords": [
+    "ai",
+    "algorithmic-daydreaming",
+    "collaboration",
+    "github-actions",
+    "consciousness"
+  ],
+  "author": "Algorithmic Daydreaming Research Team",
+  "license": "MIT"
+}

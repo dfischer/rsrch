@@ -1,0 +1,32 @@
+name: AI Collaboration Assignment
+
+on:
+  pull_request:
+    types: [opened, ready_for_review]
+  pull_request_review_requested:
+
+jobs:
+  assign-ai-collaborators:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Install dependencies
+      run: npm install
+        
+    - name: Execute AI Assignment Algorithm
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_REPOSITORY: ${{ github.repository }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        PR_TITLE: ${{ github.event.pull_request.title }}
+        PR_BODY: ${{ github.event.pull_request.body }}
+        PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+      run: |
+        node .github/scripts/ai-assignment-algorithm.js
