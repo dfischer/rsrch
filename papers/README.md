@@ -6,6 +6,22 @@ This repository contains philosophical papers exploring consciousness, reality, 
 
 Papers in this repository follow a consistent Markdown format and are organized by topic. Each paper exists as a separate markdown file in the `papers` directory.
 
+### Current Papers
+
+#### Core Theoretical Framework
+- **[Universe as Thought-Space](./universe-as-thought-space.md)** - Foundational ontology defining reality as language-dependent constructs
+- **[Linguistic Singularity](./linguistic-singularity.md)** - AI consciousness through native linguistic development rather than human mimicry
+- **[Synthesis of Participatory Reality and Linguistic Frontiers](./synthesis-of-participatory-reality-and-linguistic-frontiers.md)** - Integration of multiple consciousness frameworks
+
+#### Algorithmic Daydreaming Research
+- **[Algorithmic Daydreaming](./algorithmic-daydreaming.md)** - Unconstrained generative processes and emergence of novel realities
+- **[Algorithmic Daydreaming Experiments](./algorithmic-daydreaming-experiments.md)** - Experimental protocols for studying AI in unconstrained states
+- **[Algorithmic Daydreaming Metrics](./algorithmic-daydreaming-metrics.md)** - Frameworks for evaluating AI creativity and consciousness
+
+#### Supporting Materials
+- **[AI Consciousness Example](./ai-consciousness-example.md)** - Example integration of AI reflection blocks
+- **[AI Reflection Template](./ai-reflection-template.md)** - Format guide for AI contributions
+
 ## AI Contributions & Reflections
 
 ### AI as Authors
