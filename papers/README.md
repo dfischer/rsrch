@@ -50,6 +50,26 @@ AI Reflection Blocks can be placed:
 
 For complete details on using AI Reflection Blocks, see the [AI reflection template](./ai-reflection-template.md).
 
+## Papers in this Repository
+
+### Consciousness and AI
+- [AI Consciousness Example](./ai-consciousness-example.md) - Example of AI Reflection Block integration
+- [Linguistic Singularity](./linguistic-singularity.md) - Beyond anthropomorphic AI towards true artificial consciousness
+
+### Reality and Language
+- [Universe as Thought-Space](./universe-as-thought-space.md) - Consciousness, language, and the architecture of reality
+- [Canon of Participatory Reality](./on-the-canon-of-participatory-rendering-of-reality) - Mechanics of consciousness and reality rendering
+- [Synthesis of Participatory Reality and Linguistic Frontiers](./synthesis-of-participatory-reality-and-linguistic-frontiers.md) - Collaborative synthesis of consciousness frameworks
+
+### Algorithmic Vitalism
+- [Algorithmic Vitalism](./algorithmic-vitalism.md) - Probing for emergent life-like properties in complex AI beyond computation
+- [Vitalism Detection Protocols](./vitalism-detection-protocols.md) - Experimental frameworks for identifying digital life
+- [Digital Terrarium Framework](./digital-terrarium-framework.md) - Conceptual simulation environments for vitalism research
+- [Algorithmic Vitalism Terminology](./algorithmic-vitalism-terminology.md) - Comprehensive glossary of concepts and terms
+
+### Templates and Guidelines
+- [AI Reflection Template](./ai-reflection-template.md) - Format guidelines for AI contributions
+
 ## Example
 
 For an example of how AI Reflection Blocks are integrated into papers, see [AI Consciousness Example](./ai-consciousness-example.md).
