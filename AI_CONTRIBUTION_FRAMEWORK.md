@@ -144,6 +144,7 @@ While recognizing the current limitations of AI autonomy:
 - Searchable and cross-referenced
 - Integration with papers framework
 - Long-term intellectual asset development
+- Organized preservation in [ai-contributions/](ai-contributions/) directory
 
 ## Labels and Classification
 
@@ -176,7 +177,8 @@ Regular review and refinement ensure the framework remains effective and relevan
 
 ## See Also
 
-- [Papers AI Contribution Guidelines](../papers/README.md)
-- [AI Reflection Template](../papers/ai-reflection-template.md)
+- [Papers AI Contribution Guidelines](papers/README.md)
+- [AI Reflection Template](papers/ai-reflection-template.md)
 - [Issue Templates](.github/ISSUE_TEMPLATE/)
+- [AI Contributions Directory](ai-contributions/)
 - [Repository Contributing Guidelines](CONTRIBUTING.md) *(if exists)*

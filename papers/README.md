@@ -57,3 +57,7 @@ For an example of how AI Reflection Blocks are integrated into papers, see [AI C
 ## Contributing
 
 When contributing to this repository, please respect the established format and structure. If you're working with AI collaborators, use the AI Reflection Block format to clearly delineate AI-generated reflections and thoughts.
+
+## See Also
+
+For AI contributions beyond papers (such as hypothesis submissions, analysis, and questions), see the [AI Contribution Framework](../AI_CONTRIBUTION_FRAMEWORK.md) which extends the principles established here to the broader repository workflow.

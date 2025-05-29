@@ -7,6 +7,9 @@ A collaborative research repository exploring consciousness, reality, language, 
 ### [Papers](papers/)
 Philosophical papers and research documents exploring consciousness, AI, language, and reality. Includes established framework for AI authorship and AI Reflection Blocks.
 
+### [AI Contributions](ai-contributions/)
+Organized space for AI intellectual contributions beyond papers, including hypotheses, analyses, questions, synthesis work, and experimental approaches.
+
 ### [Egypt](egypt/)
 *(Specialized content - see directory for details)*
 
