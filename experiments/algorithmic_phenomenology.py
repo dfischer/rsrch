@@ -155,7 +155,9 @@ class TransformerGaze(AlgorithmicGaze):
         for head in range(self.attention_heads):
             # Create attention pattern (simplified)
             window_size = min(self.context_window, len(sequence))
-            attention_weights = np.random.softmax(np.random.randn(window_size))
+            raw_weights = np.random.randn(window_size)
+            exp_weights = np.exp(raw_weights - np.max(raw_weights))
+            attention_weights = exp_weights / np.sum(exp_weights)
             
             # Calculate attention-weighted representation
             attended_values = sequence[:window_size] * attention_weights
@@ -443,12 +445,5 @@ def main():
 
 
 if __name__ == "__main__":
-    # Add numpy softmax for convenience
-    def softmax(x):
-        exp_x = np.exp(x - np.max(x))
-        return exp_x / np.sum(exp_x)
-    
-    np.random.softmax = softmax
-    
     # Run the main experiment
     experiment, results, analysis = main()
