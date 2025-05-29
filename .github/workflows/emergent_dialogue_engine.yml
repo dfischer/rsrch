@@ -60,7 +60,7 @@ jobs:
             comment_body="${{ github.event.comment.body }}"
             
             # Extract seed topic (everything after /ede-explore until persona: or end of line)
-            seed_topic=$(echo "$comment_body" | sed -n 's|^/ede-explore \([^[:space:]].*\)|\1|p' | sed 's/persona:.*$//' | xargs)
+            seed_topic=$(echo "$comment_body" | sed -nE 's|^/ede-explore[[:space:]]+([^[:space:]].*?)([[:space:]]+persona:.*)?$|\1|p')
             
             # Extract persona if present, default to TheSynthesist
             if echo "$comment_body" | grep -q "persona:"; then
