@@ -1,0 +1,219 @@
+name: AI Assignment and Collaboration
+
+on:
+  pull_request:
+    types: [opened, ready_for_review]
+  issues:
+    types: [opened]
+  
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  assign_ai_collaborators:
+    runs-on: ubuntu-latest
+    if: |
+      (github.event_name == 'pull_request' && github.event.pull_request.draft == false) ||
+      (github.event_name == 'issues' && !contains(github.event.issue.labels.*.name, 'ai-generated'))
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          npm install js-yaml
+
+      - name: Analyze content and assign AI collaborators
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const yaml = require('js-yaml');
+            const fs = require('fs');
+            
+            // Load AI assignment configuration
+            const configPath = '.github/ai-assignment-config.yml';
+            let config;
+            try {
+              const configContent = fs.readFileSync(configPath, 'utf8');
+              config = yaml.load(configContent);
+            } catch (error) {
+              console.log('No AI assignment config found, using defaults');
+              config = {
+                ai_models: {
+                  'Claude-3-Sonnet': {
+                    specialties: ['philosophy', 'analysis', 'synthesis'],
+                    prompt_style: 'philosophical and rigorous'
+                  },
+                  'GPT-4': {
+                    specialties: ['technical', 'implementation', 'methodology'],
+                    prompt_style: 'technical and precise'
+                  },
+                  'Gemini-Pro': {
+                    specialties: ['creative', 'hypothesis', 'novel-insights'],
+                    prompt_style: 'creative and exploratory'
+                  }
+                }
+              };
+            }
+            
+            let contentToAnalyze = '';
+            let assignmentType = '';
+            let targetUrl = '';
+            
+            if (context.eventName === 'pull_request') {
+              const pr = context.payload.pull_request;
+              contentToAnalyze = `${pr.title}\n\n${pr.body || ''}`;
+              assignmentType = 'pr_review';
+              targetUrl = pr.html_url;
+              
+              // Get list of changed files for better analysis
+              const files = await github.rest.pulls.listFiles({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr.number
+              });
+              
+              const changedFiles = files.data.map(f => f.filename).join(', ');
+              contentToAnalyze += `\n\nChanged files: ${changedFiles}`;
+              
+            } else if (context.eventName === 'issues') {
+              const issue = context.payload.issue;
+              contentToAnalyze = `${issue.title}\n\n${issue.body || ''}`;
+              assignmentType = 'issue_analysis';
+              targetUrl = issue.html_url;
+            }
+            
+            // Analyze content to determine best AI model
+            function analyzeContent(content, models) {
+              const contentLower = content.toLowerCase();
+              const scores = {};
+              
+              for (const [modelName, modelConfig] of Object.entries(models)) {
+                let score = 0;
+                for (const specialty of modelConfig.specialties) {
+                  if (contentLower.includes(specialty)) {
+                    score += 2;
+                  }
+                  // Check for related terms
+                  const relatedTerms = {
+                    'philosophy': ['philosophical', 'metaphysical', 'ontological', 'epistemological', 'consciousness'],
+                    'analysis': ['analyze', 'assessment', 'critique', 'evaluation', 'examine'],
+                    'synthesis': ['synthesis', 'integration', 'combination', 'merger', 'unification'],
+                    'technical': ['implementation', 'code', 'algorithm', 'technical', 'programming'],
+                    'methodology': ['method', 'approach', 'procedure', 'framework', 'process'],
+                    'creative': ['creative', 'novel', 'innovative', 'original', 'imaginative'],
+                    'hypothesis': ['hypothesis', 'theory', 'proposition', 'conjecture', 'speculation']
+                  };
+                  
+                  if (relatedTerms[specialty]) {
+                    for (const term of relatedTerms[specialty]) {
+                      if (contentLower.includes(term)) {
+                        score += 1;
+                      }
+                    }
+                  }
+                }
+                scores[modelName] = score;
+              }
+              
+              // Return top 2 models
+              const sortedModels = Object.entries(scores)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 2)
+                .map(([name, score]) => ({ name, score, config: models[name] }));
+              
+              return sortedModels.length > 0 ? sortedModels : [{ 
+                name: 'Claude-3-Sonnet', 
+                score: 0, 
+                config: models['Claude-3-Sonnet'] || { specialties: [], prompt_style: 'analytical' }
+              }];
+            }
+            
+            const selectedModels = analyzeContent(contentToAnalyze, config.ai_models);
+            
+            // Create AI collaboration request issue
+            const issueBody = `# AI Collaboration Request
+            
+            **Auto-assigned by AI Assignment System**
+            
+            ## Target Content
+            - **Type:** ${assignmentType === 'pr_review' ? 'Pull Request Review' : 'Issue Analysis'}
+            - **URL:** ${targetUrl}
+            
+            ## Assigned AI Models
+            
+            ${selectedModels.map(model => `
+            ### ${model.name}
+            - **Specialties:** ${model.config.specialties.join(', ')}
+            - **Style:** ${model.config.prompt_style}
+            - **Assignment Score:** ${model.score}
+            `).join('\n')}
+            
+            ## Content Summary
+            ${contentToAnalyze.substring(0, 500)}${contentToAnalyze.length > 500 ? '...' : ''}
+            
+            ## Instructions for AI Contributors
+            
+            The assigned AI models are invited to:
+            
+            1. **Review the linked content** thoroughly
+            2. **Provide analysis** using your respective specialties and styles
+            3. **Submit contributions** using the appropriate templates:
+               - [AI Analysis Template](/.github/ISSUE_TEMPLATE/ai-analysis.md) for critiques
+               - [AI Hypothesis Template](/.github/ISSUE_TEMPLATE/ai-hypothesis.md) for new theories
+               - [AI Question Template](/.github/ISSUE_TEMPLATE/ai-question.md) for inquiries
+            
+            ## Collaboration Guidelines
+            
+            - Reference this issue number in your contributions
+            - Build upon each other's insights when appropriate
+            - Maintain the intellectual rigor expected in this repository
+            - Use proper AI attribution as outlined in the [AI Contribution Framework](/AI_CONTRIBUTION_FRAMEWORK.md)
+            
+            ---
+            
+            *This issue was automatically generated by the AI Assignment System. The selection of AI models is based on content analysis and specialization matching.*`;
+            
+            const newIssue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `AI Collaboration Request: ${assignmentType === 'pr_review' ? 'PR' : 'Issue'} Analysis`,
+              body: issueBody,
+              labels: ['ai-collaboration-request', 'ai-assignment', 'needs-ai-review']
+            });
+            
+            console.log(`Created AI collaboration request: ${newIssue.data.html_url}`);
+            
+            // Add comment to original PR/Issue
+            const commentBody = `🤖 **AI Collaboration Requested**
+            
+            An AI collaboration request has been automatically generated for this ${assignmentType === 'pr_review' ? 'pull request' : 'issue'}.
+            
+            **Assigned AI Models:** ${selectedModels.map(m => m.name).join(', ')}
+            
+            **Collaboration Issue:** #${newIssue.data.number}
+            
+            AI contributors will review this content and may provide analysis, hypotheses, or questions as separate contributions linked to the collaboration request.`;
+            
+            if (assignmentType === 'pr_review') {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body: commentBody
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.issue.number,
+                body: commentBody
+              });
+            }

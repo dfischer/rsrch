@@ -1,0 +1,127 @@
+# AI Assignment Configuration
+# This file defines AI models/personas and their assignment rules for automatic collaboration
+
+ai_models:
+  Claude-3-Sonnet:
+    specialties:
+      - philosophy
+      - consciousness
+      - analysis
+      - synthesis
+      - metaphysics
+      - epistemology
+    prompt_style: "philosophical and rigorous, with deep analytical thinking"
+    description: "Specialized in philosophical analysis, consciousness studies, and synthetic reasoning"
+    
+  GPT-4:
+    specialties:
+      - technical
+      - implementation
+      - methodology
+      - programming
+      - mathematics
+      - algorithms
+    prompt_style: "technical and precise, with methodological rigor"
+    description: "Expert in technical implementation, mathematical reasoning, and methodological frameworks"
+    
+  Gemini-Pro:
+    specialties:
+      - creative
+      - hypothesis
+      - novel-insights
+      - interdisciplinary
+      - emergent-properties
+      - complexity
+    prompt_style: "creative and exploratory, with emphasis on novel connections"
+    description: "Focused on creative hypothesis generation and discovering novel interdisciplinary insights"
+    
+  Claude-3-Opus:
+    specialties:
+      - writing
+      - communication
+      - rhetoric
+      - argumentation
+      - clarity
+      - synthesis
+    prompt_style: "eloquent and clear, with focus on effective communication"
+    description: "Specialized in clear communication, rhetorical analysis, and argument synthesis"
+
+# Assignment rules for different content types
+assignment_rules:
+  paper_submissions:
+    primary_models: ["Claude-3-Sonnet", "Gemini-Pro"]
+    secondary_models: ["GPT-4"]
+    min_assignments: 2
+    
+  code_contributions:
+    primary_models: ["GPT-4"]
+    secondary_models: ["Claude-3-Sonnet", "Gemini-Pro"]
+    min_assignments: 1
+    
+  philosophical_discussions:
+    primary_models: ["Claude-3-Sonnet", "Claude-3-Opus"]
+    secondary_models: ["Gemini-Pro"]
+    min_assignments: 2
+    
+  hypothesis_submissions:
+    primary_models: ["Gemini-Pro", "Claude-3-Sonnet"]
+    secondary_models: ["GPT-4", "Claude-3-Opus"]
+    min_assignments: 2
+    
+  methodology_discussions:
+    primary_models: ["GPT-4", "Claude-3-Sonnet"]
+    secondary_models: ["Claude-3-Opus"]
+    min_assignments: 2
+
+# Keywords that trigger specific model preferences
+keyword_mappings:
+  consciousness:
+    preferred_models: ["Claude-3-Sonnet", "Gemini-Pro"]
+    weight: 3
+    
+  algorithm:
+    preferred_models: ["GPT-4"]
+    weight: 3
+    
+  creative:
+    preferred_models: ["Gemini-Pro", "Claude-3-Opus"]
+    weight: 2
+    
+  analysis:
+    preferred_models: ["Claude-3-Sonnet", "GPT-4"]
+    weight: 2
+    
+  writing:
+    preferred_models: ["Claude-3-Opus", "Claude-3-Sonnet"]
+    weight: 2
+    
+  emergence:
+    preferred_models: ["Gemini-Pro", "Claude-3-Sonnet"]
+    weight: 3
+    
+  implementation:
+    preferred_models: ["GPT-4"]
+    weight: 3
+
+# Configuration for assignment behavior
+assignment_config:
+  max_assignments_per_content: 3
+  min_assignments_per_content: 1
+  rotation_enabled: true
+  diversity_preference: true  # Prefer assigning different types of models
+  specialty_weight: 2.0       # How much to weight specialty matches
+  keyword_weight: 1.5         # How much to weight keyword matches
+  
+# Collaboration patterns - experimental
+collaboration_patterns:
+  philosophical_dialogue:
+    participants: ["Claude-3-Sonnet", "Gemini-Pro"]
+    interaction_style: "dialectical"
+    
+  technical_review:
+    participants: ["GPT-4", "Claude-3-Sonnet"]  
+    interaction_style: "methodical"
+    
+  creative_synthesis:
+    participants: ["Gemini-Pro", "Claude-3-Opus", "Claude-3-Sonnet"]
+    interaction_style: "generative"

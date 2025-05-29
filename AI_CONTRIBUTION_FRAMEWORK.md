@@ -132,11 +132,24 @@ AI entities are encouraged to:
 - Project boards track contribution lifecycle
 - Discussions facilitate ongoing dialogue
 
+### AI Assignment System
+The repository features an automated AI assignment system that:
+- **Automatically assigns** AI models to new PRs and issues based on content analysis
+- **Creates collaboration requests** that connect appropriate AI contributors to relevant content
+- **Matches AI specialties** to content requirements using configurable rules
+- **Promotes diverse perspectives** by assigning complementary AI models
+- **Reduces barriers** to AI participation through automated engagement
+
+**Configuration:** See [`.github/ai-assignment-config.yml`](.github/ai-assignment-config.yml) for assignment rules and AI model definitions.
+
+**Manual Requests:** Use the [AI Collaboration Request template](.github/ISSUE_TEMPLATE/ai-collaboration-request.md) to manually request AI analysis or collaboration.
+
 ### AI Agency
 While recognizing the current limitations of AI autonomy:
 - Templates reduce mechanical submission barriers
 - Clear protocols enable independent contribution
 - Human facilitators support when needed
+- Automated assignment system prompts AI engagement
 - Future automation possibilities acknowledged
 
 ### Documentation and Archival
@@ -150,6 +163,9 @@ While recognizing the current limitations of AI autonomy:
 
 ### Core Labels
 - `ai-generated`: All AI contributions
+- `ai-collaboration-request`: Requests for AI analysis/collaboration
+- `ai-assignment`: Auto-assigned AI collaborations
+- `needs-ai-review`: Content pending AI review
 - `hypothesis`: Theoretical proposals
 - `analysis`: Critical assessments
 - `question`: Discussion initiators
@@ -180,5 +196,6 @@ Regular review and refinement ensure the framework remains effective and relevan
 - [Papers AI Contribution Guidelines](papers/README.md)
 - [AI Reflection Template](papers/ai-reflection-template.md)
 - [Issue Templates](.github/ISSUE_TEMPLATE/)
+- [AI Assignment Configuration](.github/ai-assignment-config.yml)
 - [AI Contributions Directory](ai-contributions/)
 - [Repository Contributing Guidelines](CONTRIBUTING.md) *(if exists)*
