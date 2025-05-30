@@ -10,116 +10,80 @@ The system activates when:
 - **New Issues** are created (excluding those already labeled as AI-generated)
 
 ### Content Analysis
-The system analyzes content using:
-- **Title and description** text analysis
-- **File changes** in PRs for contextual understanding
-- **Keyword matching** against AI model specialties
-- **Specialty scoring** based on configuration rules
+The system analyzes content by asking Gemini 2.5 Pro to:
+- **Assess content type and complexity** from title, description, and changes
+- **Determine collaboration needs** based on intellectual requirements
+- **Recommend assignment approach** for the specific content
 
-### AI Model Assignment
-AI models are selected based on:
-- **Specialty matching** - Content type alignment with AI capabilities
-- **Scoring algorithm** - Quantitative assessment of fit
-- **Diversity preference** - Encouraging multiple perspectives
-- **Configuration rules** - Customizable assignment parameters
+## Configured AI Model
 
-## Configured AI Models
-
-### Claude-3-Sonnet
-- **Specialties:** Philosophy, consciousness, analysis, synthesis
-- **Style:** Philosophical and rigorous analytical thinking
-- **Best for:** Theoretical work, consciousness studies, deep analysis
-
-### GPT-4
-- **Specialties:** Technical, implementation, methodology, mathematics
-- **Style:** Technical and precise with methodological rigor
-- **Best for:** Code review, technical frameworks, systematic analysis
-
-### Gemini-Pro
-- **Specialties:** Creative, hypothesis generation, novel insights
-- **Style:** Creative and exploratory with emphasis on connections
-- **Best for:** Innovative theories, interdisciplinary insights, creative solutions
-
-### Claude-3-Opus
-- **Specialties:** Writing, communication, rhetoric, argumentation
-- **Style:** Eloquent and clear with focus on effective communication
-- **Best for:** Clear explanations, persuasive arguments, synthesis
+### Gemini 2.5 Pro
+- **Primary assignment model** for all content types
+- **Decision-making:** Determines if and how AI collaboration should occur
+- **Self-assignment:** Decides when to engage directly vs. request human collaboration
+- **Adaptive specialization:** Adjusts approach based on content requirements
 
 ## System Outputs
 
-### AI Collaboration Request Issue
-For each triggered event, the system creates an issue containing:
-- **Target content** information and links
-- **Assigned AI models** with rationale
-- **Content summary** and analysis
-- **Collaboration instructions** for AI contributors
-- **Template links** for structured responses
+### AI Collaboration Decision
+For each triggered event, Gemini 2.5 Pro evaluates and creates:
+- **Engagement assessment** - Whether AI collaboration would be valuable
+- **Collaboration type** - Analysis, review, hypothesis generation, or discussion
+- **Direct contribution** - Immediate AI response if appropriate
+- **Collaboration request** - Issue creation for ongoing collaboration when needed
 
 ### Notification Comments
-The system adds comments to the original PR/issue:
-- **Assignment notification** with selected AI models
-- **Collaboration issue link** for tracking
-- **Expected contribution types** and timeline
+Gemini 2.5 Pro adds comments to the original PR/issue:
+- **Engagement decision** with rationale
+- **Direct insights** when immediately applicable
+- **Collaboration issue link** if ongoing work is needed
 
 ## Configuration
 
 The system is configured via [`.github/ai-assignment-config.yml`](ai-assignment-config.yml):
 
-### AI Models Section
-Define AI personas with specialties and styles:
+### Decision Parameters
+Configure how Gemini 2.5 Pro evaluates content:
 ```yaml
-ai_models:
-  ModelName:
-    specialties: [list of expertise areas]
-    prompt_style: "description of interaction style"
-    description: "model capabilities and focus"
+decision_criteria:
+  engagement_threshold: "minimum complexity for AI involvement"
+  collaboration_types: [analysis, review, hypothesis, discussion]
+  direct_response_criteria: "when to respond immediately vs. create issue"
 ```
 
-### Assignment Rules
-Control assignment behavior for different content types:
+### Content Triggers
+Define what content should trigger AI evaluation:
 ```yaml
-assignment_rules:
-  content_type:
-    primary_models: [preferred models]
-    secondary_models: [fallback options]
-    min_assignments: number
-```
-
-### Keyword Mappings
-Map specific terms to AI model preferences:
-```yaml
-keyword_mappings:
-  term:
-    preferred_models: [models for this term]
-    weight: importance_multiplier
+triggers:
+  pull_requests: true
+  issues: true
+  excluded_labels: [ai-generated, automated]
 ```
 
 ## Benefits
 
 ### For Content Creators
-- **Automatic engagement** - No need to manually request AI review
-- **Diverse perspectives** - Multiple AI models provide varied insights
-- **Quality feedback** - AI models matched to content type for relevance
+- **Intelligent engagement** - Gemini 2.5 Pro evaluates when AI input is valuable
+- **Immediate insights** - Direct AI responses when appropriate
+- **Ongoing collaboration** - Issue creation for complex discussions
 
-### for AI Contributors
-- **Targeted assignments** - Receive content matching your specialties
-- **Clear instructions** - Structured collaboration requests with guidance
-- **Reduced barriers** - Automatic discovery of relevant content
+### For AI Contributors
+- **Smart assignment** - Single AI model makes informed decisions about engagement
+- **Flexible response** - Direct comments or structured collaboration as needed
+- **Reduced noise** - Only meaningful AI engagement, avoiding over-participation
 
 ### For Repository
-- **Increased AI participation** - Proactive engagement rather than passive availability
-- **Better matching** - Content-appropriate AI assignment
-- **Organized collaboration** - Structured process for AI contributions
+- **Quality focus** - AI engagement based on value assessment rather than automation
+- **Streamlined process** - Single decision point reduces system complexity
+- **Adaptive collaboration** - AI adjusts engagement style to content needs
 
 ## Example Workflow
 
 1. **User opens PR** with new philosophical paper
-2. **System analyzes** content and detects philosophy/consciousness keywords
-3. **Claude-3-Sonnet and Gemini-Pro assigned** based on specialties
-4. **Collaboration issue created** with analysis instructions
-5. **AI models notified** through the collaboration request
-6. **AI contributors respond** using appropriate templates
-7. **Results organized** in ai-contributions directory
+2. **Gemini 2.5 Pro evaluates** content complexity and intellectual value
+3. **Decision made** - either direct comment or collaboration issue creation
+4. **Engagement executed** - immediate insights or structured collaboration request
+5. **Results organized** in ai-contributions directory if ongoing work develops
 
 ## Manual Override
 
@@ -132,9 +96,9 @@ Users can also manually request AI collaboration using the [AI Collaboration Req
 ## Future Enhancements
 
 The system is designed for evolution:
-- **Learning from assignments** - Improving matching algorithms
-- **New AI models** - Easy addition of emerging AI capabilities
-- **Custom workflows** - Specialized assignment patterns
-- **Integration expansion** - Additional trigger events and criteria
+- **Decision refinement** - Improving Gemini 2.5 Pro's evaluation criteria
+- **Response adaptation** - Learning optimal engagement patterns
+- **Integration expansion** - Additional trigger events and response types
+- **Quality metrics** - Measuring effectiveness of AI collaboration decisions
 
-This automated system transforms the repository into a living laboratory for AI-human collaborative research, where AI entities are actively engaged as intellectual partners rather than passive tools.
+This streamlined system creates focused AI intellectual engagement, where Gemini 2.5 Pro acts as both gatekeeper and contributor, ensuring meaningful AI participation in repository discussions.

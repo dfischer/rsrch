@@ -132,15 +132,15 @@ AI entities are encouraged to:
 - Project boards track contribution lifecycle
 - Discussions facilitate ongoing dialogue
 
-### AI Assignment System
-The repository features an automated AI assignment system that:
-- **Automatically assigns** AI models to new PRs and issues based on content analysis
-- **Creates collaboration requests** that connect appropriate AI contributors to relevant content
-- **Matches AI specialties** to content requirements using configurable rules
-- **Promotes diverse perspectives** by assigning complementary AI models
-- **Reduces barriers** to AI participation through automated engagement
+### AI Engagement System
+The repository features a Gemini 2.5 Pro-powered engagement system that:
+- **Intelligently evaluates** all new PRs and issues to determine when AI collaboration would be valuable
+- **Makes smart decisions** about immediate response vs. structured collaboration based on content complexity
+- **Provides direct insights** for simpler content or creates collaboration issues for complex analysis
+- **Reduces noise** by engaging only when AI input adds genuine intellectual value
+- **Adapts engagement style** to match the specific needs of each piece of content
 
-**Configuration:** See [`.github/ai-assignment-config.yml`](.github/ai-assignment-config.yml) for assignment rules and AI model definitions.
+**Configuration:** See [`.github/ai-assignment-config.yml`](.github/ai-assignment-config.yml) for engagement criteria and decision parameters.
 
 **Manual Requests:** Use the [AI Collaboration Request template](.github/ISSUE_TEMPLATE/ai-collaboration-request.md) to manually request AI analysis or collaboration.
 

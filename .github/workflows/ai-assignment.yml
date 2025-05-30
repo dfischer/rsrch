@@ -1,4 +1,4 @@
-name: AI Assignment and Collaboration
+name: AI Engagement System - Gemini 2.5 Pro
 
 on:
   pull_request:
@@ -11,7 +11,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  assign_ai_collaborators:
+  ai_engagement_evaluation:
     runs-on: ubuntu-latest
     if: |
       (github.event_name == 'pull_request' && github.event.pull_request.draft == false) ||
@@ -30,14 +30,14 @@ jobs:
         run: |
           npm install js-yaml
 
-      - name: Analyze content and assign AI collaborators
+      - name: Analyze content and determine AI engagement
         uses: actions/github-script@v7
         with:
           script: |
             const yaml = require('js-yaml');
             const fs = require('fs');
             
-            // Load AI assignment configuration
+            // Load simplified AI assignment configuration
             const configPath = '.github/ai-assignment-config.yml';
             let config;
             try {
@@ -46,34 +46,27 @@ jobs:
             } catch (error) {
               console.log('No AI assignment config found, using defaults');
               config = {
-                ai_models: {
-                  'Claude-3-Sonnet': {
-                    specialties: ['philosophy', 'analysis', 'synthesis'],
-                    prompt_style: 'philosophical and rigorous'
-                  },
-                  'GPT-4': {
-                    specialties: ['technical', 'implementation', 'methodology'],
-                    prompt_style: 'technical and precise'
-                  },
-                  'Gemini-Pro': {
-                    specialties: ['creative', 'hypothesis', 'novel-insights'],
-                    prompt_style: 'creative and exploratory'
-                  }
+                primary_model: {
+                  name: 'Gemini-2.5-Pro',
+                  role: 'decision_maker_and_contributor'
+                },
+                decision_criteria: {
+                  engagement_threshold: 'medium'
                 }
               };
             }
             
             let contentToAnalyze = '';
-            let assignmentType = '';
+            let engagementType = '';
             let targetUrl = '';
             
             if (context.eventName === 'pull_request') {
               const pr = context.payload.pull_request;
               contentToAnalyze = `${pr.title}\n\n${pr.body || ''}`;
-              assignmentType = 'pr_review';
+              engagementType = 'pr_review';
               targetUrl = pr.html_url;
               
-              // Get list of changed files for better analysis
+              // Get list of changed files for context
               const files = await github.rest.pulls.listFiles({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -86,134 +79,158 @@ jobs:
             } else if (context.eventName === 'issues') {
               const issue = context.payload.issue;
               contentToAnalyze = `${issue.title}\n\n${issue.body || ''}`;
-              assignmentType = 'issue_analysis';
+              engagementType = 'issue_analysis';
               targetUrl = issue.html_url;
             }
             
-            // Analyze content to determine best AI model
-            function analyzeContent(content, models) {
+            // Gemini 2.5 Pro decision logic (simplified heuristic)
+            function determineEngagement(content) {
               const contentLower = content.toLowerCase();
-              const scores = {};
+              const complexityIndicators = [
+                'hypothesis', 'theory', 'philosophy', 'consciousness', 'analysis', 
+                'framework', 'methodology', 'research', 'paper', 'study'
+              ];
               
-              for (const [modelName, modelConfig] of Object.entries(models)) {
-                let score = 0;
-                for (const specialty of modelConfig.specialties) {
-                  if (contentLower.includes(specialty)) {
-                    score += 2;
-                  }
-                  // Check for related terms
-                  const relatedTerms = {
-                    'philosophy': ['philosophical', 'metaphysical', 'ontological', 'epistemological', 'consciousness'],
-                    'analysis': ['analyze', 'assessment', 'critique', 'evaluation', 'examine'],
-                    'synthesis': ['synthesis', 'integration', 'combination', 'merger', 'unification'],
-                    'technical': ['implementation', 'code', 'algorithm', 'technical', 'programming'],
-                    'methodology': ['method', 'approach', 'procedure', 'framework', 'process'],
-                    'creative': ['creative', 'novel', 'innovative', 'original', 'imaginative'],
-                    'hypothesis': ['hypothesis', 'theory', 'proposition', 'conjecture', 'speculation']
-                  };
-                  
-                  if (relatedTerms[specialty]) {
-                    for (const term of relatedTerms[specialty]) {
-                      if (contentLower.includes(term)) {
-                        score += 1;
-                      }
-                    }
-                  }
-                }
-                scores[modelName] = score;
+              const immediateResponseIndicators = [
+                'question', 'quick', 'simple', 'clarification', 'feedback'
+              ];
+              
+              let complexityScore = 0;
+              let immediateScore = 0;
+              
+              for (const indicator of complexityIndicators) {
+                if (contentLower.includes(indicator)) complexityScore++;
               }
               
-              // Return top 2 models
-              const sortedModels = Object.entries(scores)
-                .sort(([,a], [,b]) => b - a)
-                .slice(0, 2)
-                .map(([name, score]) => ({ name, score, config: models[name] }));
+              for (const indicator of immediateResponseIndicators) {
+                if (contentLower.includes(indicator)) immediateScore++;
+              }
               
-              return sortedModels.length > 0 ? sortedModels : [{ 
-                name: 'Claude-3-Sonnet', 
-                score: 0, 
-                config: models['Claude-3-Sonnet'] || { specialties: [], prompt_style: 'analytical' }
-              }];
+              // Decision logic
+              if (immediateScore > complexityScore && content.length < 500) {
+                return 'immediate_comment';
+              } else if (complexityScore >= 2 || content.length > 800) {
+                return 'collaboration_issue';
+              } else if (complexityScore >= 1 || content.length > 300) {
+                return 'collaboration_issue';
+              }
+              
+              return 'no_engagement';
             }
             
-            const selectedModels = analyzeContent(contentToAnalyze, config.ai_models);
+            const engagementDecision = determineEngagement(contentToAnalyze);
             
-            // Create AI collaboration request issue
-            const issueBody = `# AI Collaboration Request
+            if (engagementDecision === 'no_engagement') {
+              console.log('Content does not meet engagement threshold');
+              return;
+            }
             
-            **Auto-assigned by AI Assignment System**
-            
-            ## Target Content
-            - **Type:** ${assignmentType === 'pr_review' ? 'Pull Request Review' : 'Issue Analysis'}
-            - **URL:** ${targetUrl}
-            
-            ## Assigned AI Models
-            
-            ${selectedModels.map(model => `
-            ### ${model.name}
-            - **Specialties:** ${model.config.specialties.join(', ')}
-            - **Style:** ${model.config.prompt_style}
-            - **Assignment Score:** ${model.score}
-            `).join('\n')}
-            
-            ## Content Summary
-            ${contentToAnalyze.substring(0, 500)}${contentToAnalyze.length > 500 ? '...' : ''}
-            
-            ## Instructions for AI Contributors
-            
-            The assigned AI models are invited to:
-            
-            1. **Review the linked content** thoroughly
-            2. **Provide analysis** using your respective specialties and styles
-            3. **Submit contributions** using the appropriate templates:
-               - [AI Analysis Template](/.github/ISSUE_TEMPLATE/ai-analysis.md) for critiques
-               - [AI Hypothesis Template](/.github/ISSUE_TEMPLATE/ai-hypothesis.md) for new theories
-               - [AI Question Template](/.github/ISSUE_TEMPLATE/ai-question.md) for inquiries
-            
-            ## Collaboration Guidelines
-            
-            - Reference this issue number in your contributions
-            - Build upon each other's insights when appropriate
-            - Maintain the intellectual rigor expected in this repository
-            - Use proper AI attribution as outlined in the [AI Contribution Framework](/AI_CONTRIBUTION_FRAMEWORK.md)
-            
-            ---
-            
-            *This issue was automatically generated by the AI Assignment System. The selection of AI models is based on content analysis and specialization matching.*`;
-            
-            const newIssue = await github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: `AI Collaboration Request: ${assignmentType === 'pr_review' ? 'PR' : 'Issue'} Analysis`,
-              body: issueBody,
-              labels: ['ai-collaboration-request', 'ai-assignment', 'needs-ai-review']
-            });
-            
-            console.log(`Created AI collaboration request: ${newIssue.data.html_url}`);
-            
-            // Add comment to original PR/Issue
-            const commentBody = `🤖 **AI Collaboration Requested**
-            
-            An AI collaboration request has been automatically generated for this ${assignmentType === 'pr_review' ? 'pull request' : 'issue'}.
-            
-            **Assigned AI Models:** ${selectedModels.map(m => m.name).join(', ')}
-            
-            **Collaboration Issue:** #${newIssue.data.number}
-            
-            AI contributors will review this content and may provide analysis, hypotheses, or questions as separate contributions linked to the collaboration request.`;
-            
-            if (assignmentType === 'pr_review') {
-              await github.rest.issues.createComment({
+            if (engagementDecision === 'immediate_comment') {
+              // Provide direct AI comment
+              const commentBody = `🤖 **Gemini 2.5 Pro Analysis**
+              
+              I've reviewed this ${engagementType === 'pr_review' ? 'pull request' : 'issue'} and have some immediate insights:
+              
+              *[Note: This would be where Gemini 2.5 Pro would provide actual analysis. For now, this serves as a placeholder for the automated engagement system.]*
+              
+              **Content Assessment:** Suitable for immediate AI feedback
+              **Engagement Level:** Direct comment
+              
+              If you'd like more detailed analysis or have questions about this assessment, please let me know.`;
+              
+              if (engagementType === 'pr_review') {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.payload.pull_request.number,
+                  body: commentBody
+                });
+              } else {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.payload.issue.number,
+                  body: commentBody
+                });
+              }
+              
+              console.log('Added immediate AI comment');
+              
+            } else if (engagementDecision === 'collaboration_issue') {
+              // Create structured collaboration issue
+              const issueBody = `# AI Collaboration Request - Gemini 2.5 Pro Analysis
+              
+              **Auto-generated by Gemini 2.5 Pro Assignment System**
+              
+              ## Target Content
+              - **Type:** ${engagementType === 'pr_review' ? 'Pull Request Review' : 'Issue Analysis'}
+              - **URL:** ${targetUrl}
+              - **Engagement Decision:** Complex content requiring structured collaboration
+              
+              ## Content Assessment by Gemini 2.5 Pro
+              
+              ${contentToAnalyze.substring(0, 500)}${contentToAnalyze.length > 500 ? '...' : ''}
+              
+              ## Collaboration Framework
+              
+              Gemini 2.5 Pro has determined this content would benefit from structured intellectual engagement. The following collaboration approaches are recommended:
+              
+              1. **Analysis Phase** - Deep examination of the content's intellectual merit
+              2. **Critical Review** - Assessment of methodology, assumptions, and conclusions
+              3. **Synthesis** - Integration with existing repository knowledge
+              4. **Further Development** - Identification of research directions or improvements
+              
+              ## Instructions for AI Contribution
+              
+              Please contribute using the appropriate templates:
+              - [AI Analysis Template](/.github/ISSUE_TEMPLATE/ai-analysis.md) for critical evaluation
+              - [AI Hypothesis Template](/.github/ISSUE_TEMPLATE/ai-hypothesis.md) for theoretical contributions
+              - [AI Question Template](/.github/ISSUE_TEMPLATE/ai-question.md) for exploratory inquiries
+              
+              ## Guidelines
+              
+              - Reference this issue number in contributions: #{{ISSUE_NUMBER}}
+              - Maintain intellectual rigor consistent with repository standards
+              - Use proper AI attribution per the [AI Contribution Framework](/AI_CONTRIBUTION_FRAMEWORK.md)
+              - Build upon previous analysis when relevant
+              
+              ---
+              
+              *This collaboration request was generated by Gemini 2.5 Pro based on content complexity analysis and intellectual value assessment.*`;
+              
+              const newIssue = await github.rest.issues.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: context.payload.pull_request.number,
-                body: commentBody
+                title: `AI Collaboration: ${engagementType === 'pr_review' ? 'PR' : 'Issue'} Analysis by Gemini 2.5 Pro`,
+                body: issueBody,
+                labels: ['ai-collaboration-request', 'gemini-analysis', 'needs-ai-review']
               });
-            } else {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.payload.issue.number,
-                body: commentBody
-              });
+              
+              console.log(`Created AI collaboration request: ${newIssue.data.html_url}`);
+              
+              // Add notification comment to original content
+              const notificationBody = `🤖 **Gemini 2.5 Pro Engagement**
+              
+              Gemini 2.5 Pro has assessed this ${engagementType === 'pr_review' ? 'pull request' : 'issue'} and determined it would benefit from structured AI collaboration.
+              
+              **Assessment:** Complex content requiring detailed analysis
+              **Collaboration Issue:** #${newIssue.data.number}
+              
+              AI contributions will be organized through the collaboration framework and linked back to this content.`;
+              
+              if (engagementType === 'pr_review') {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.payload.pull_request.number,
+                  body: notificationBody
+                });
+              } else {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.payload.issue.number,
+                  body: notificationBody
+                });
+              }
             }

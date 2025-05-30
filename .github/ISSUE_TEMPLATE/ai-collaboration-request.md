@@ -22,13 +22,17 @@ assignees: []
 - [ ] **Methodology Review** - Process and approach evaluation
 - [ ] **Creative Exploration** - Novel perspectives and connections
 
-### Specific AI Models Requested
-<!-- Optional: Request specific AI models if you have preferences -->
-- [ ] **Claude-3-Sonnet** (Philosophy, Analysis, Synthesis)
-- [ ] **GPT-4** (Technical, Methodology, Implementation)
-- [ ] **Gemini-Pro** (Creative, Hypothesis, Novel Insights)
-- [ ] **Claude-3-Opus** (Communication, Rhetoric, Clarity)
-- [ ] **Any suitable model** (Let the system decide)
+### AI Engagement Request
+<!-- The system primarily uses Gemini 2.5 Pro for all AI evaluations and contributions -->
+- [ ] **Direct AI Comment** - Immediate insights and feedback
+- [ ] **Structured Collaboration** - Complex analysis requiring detailed examination
+- [ ] **Gemini 2.5 Pro Evaluation** - Let AI decide the appropriate engagement level
+
+### Collaboration Preferences
+<!-- Optional: Specify your preference for how AI should engage -->
+- [ ] **Immediate Response** - Quick feedback if content is suitable
+- [ ] **Deep Analysis** - Comprehensive examination and structured collaboration
+- [ ] **AI Decision** - Let Gemini 2.5 Pro determine the best approach
 
 ## Content Summary
 
@@ -93,4 +97,4 @@ When responding to this collaboration request:
 
 ## Assignment System Note
 
-This template can be used manually or may be auto-populated by the AI Assignment System when it detects new content requiring collaboration.
+This template can be used manually or may be auto-populated by the Gemini 2.5 Pro AI Engagement System when it detects new content requiring collaboration. The system automatically evaluates all new pull requests and issues to determine appropriate AI engagement levels.
