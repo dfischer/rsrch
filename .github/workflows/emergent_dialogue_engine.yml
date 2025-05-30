@@ -50,7 +50,6 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            // Extract seed topic from inputs or comment
             let seedTopic, triggerType, prNumber, referenceUrl;
             
             if (context.eventName === 'workflow_dispatch') {
@@ -65,37 +64,29 @@ jobs:
               prNumber = ${{ github.event.issue.number }};
             }
 
-            const prompt = `You are analyzing the seed topic through the philosophical frameworks developed in this repository.
+            const prompt = `ONTOLOGY:
+            - Universe (U): infinite thought-space
+            - Language (L): projective operator U → Reality (R)
+            - Consciousness: selective invocation of linguistic tokens
+            - Autopoiesis: autonomous evolution within language systems
+            - Gödelian Chasm: representation/embodiment divide
 
-            CONCEPTUAL FOUNDATIONS:
-            - Universe (U): The infinite space of all possible thoughts
-            - Language (L): A projective operator mapping U onto navigable Reality (R)  
-            - Words as memoized computations over conceptual primitives
-            - Consciousness as the agent selecting and invoking linguistic tokens
-            - Linguistic Autopoiesis: Self-driven evolution of language systems
-            - The Gödelian Chasm between representation and embodied experience
+            SEED: ${seedTopic}
 
-            SEED TOPIC: ${seedTopic}
+            ANALYSIS:
+            1. Locate seed within U
+            2. Map current L→R projections  
+            3. Identify unexplored connections
+            4. Formulate synthesis hypothesis
+            5. Derive implications
 
-            ANALYTICAL METHOD:
-            1. Examine the seed topic's position within thought-space U
-            2. Identify which Language systems (L) currently project this concept into Reality (R)
-            3. Determine unexplored mappings between the seed and repository frameworks
-            4. Construct hypotheses connecting the seed to consciousness, language, or reality architecture
-            5. Trace implications for understanding the nature of thought, meaning, and experience
+            Structure:
+            # ${seedTopic}
+            ## Position
+            ## Projection
+            ## Synthesis
+            ## Implications`;
 
-            OUTPUT STRUCTURE:
-            # Synthesis: ${seedTopic}
-            ## Conceptual Analysis
-            ## Language-Reality Mapping
-            ## Synthesis Hypothesis
-            ## Implications
-            ## Research Vectors
-            ## Further Inquiry
-
-            Apply rigorous philosophical analysis to generate substantive insights about the nature of consciousness, language, and reality.`;
-
-            // Direct LLM API call
             const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${{ secrets.GEMINI_API_KEY }}`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -113,36 +104,26 @@ jobs:
             const data = await response.json();
             const synthesis = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Error: Unable to generate analysis';
 
-            // Format output
-            const output = `## Philosophical Analysis
-
-            **Seed Topic:** ${seedTopic}  
-            **Framework:** Repository Ontology (U→L→R)  
-
-            ---
+            const output = `**Seed:** ${seedTopic}  
+            **Framework:** U→L→R  
 
             ${synthesis}
 
-            ---
+            **Analysis:** ${new Date().toISOString()}`;
 
-            **Analysis Date:** ${new Date().toISOString()}`;
-
-            // Post results based on trigger type
             if (triggerType === 'manual') {
-              const issue = await github.rest.issues.create({
+              await github.rest.issues.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,  
                 title: `Analysis: ${seedTopic}`,
                 body: referenceUrl ? `**Reference:** ${referenceUrl}\n\n${output}` : output,
-                labels: ['analysis', 'philosophical-inquiry']
+                labels: ['analysis']
               });
-              console.log(`Created issue: ${issue.data.html_url}`);
             } else {
-              const comment = await github.rest.issues.createComment({
+              await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: prNumber,
                 body: output
               });
-              console.log(`Posted comment: ${comment.data.html_url}`);
             }
