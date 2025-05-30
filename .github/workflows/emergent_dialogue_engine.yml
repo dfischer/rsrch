@@ -45,216 +45,103 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Parse trigger and inputs
-        id: parse_trigger
-        run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "trigger_type=manual" >> $GITHUB_OUTPUT
-            echo "seed_topic=${{ github.event.inputs.seed_topic }}" >> $GITHUB_OUTPUT
-            echo "initial_persona=${{ github.event.inputs.initial_persona }}" >> $GITHUB_OUTPUT
-            echo "reference_issue_url=${{ github.event.inputs.reference_issue_url }}" >> $GITHUB_OUTPUT
-          else
-            echo "trigger_type=pr_comment" >> $GITHUB_OUTPUT
-            
-            # Parse comment body for /ede-explore <seed_idea> [persona:OptionalPersona]
-            comment_body="${{ github.event.comment.body }}"
-            
-            # Extract seed topic (everything after /ede-explore until persona: or end of line)
-            seed_topic=$(echo "$comment_body" | sed -nE 's|^/ede-explore[[:space:]]+([^[:space:]].*?)([[:space:]]+persona:.*)?$|\1|p')
-            
-            # Extract persona if present, default to TheSynthesist
-            if echo "$comment_body" | grep -q "persona:"; then
-              persona=$(echo "$comment_body" | sed -n 's/.*persona:\([^[:space:]]*\).*/\1/p')
-            else
-              persona="TheSynthesist"
-            fi
-            
-            echo "seed_topic=$seed_topic" >> $GITHUB_OUTPUT
-            echo "initial_persona=$persona" >> $GITHUB_OUTPUT
-            echo "reference_issue_url=" >> $GITHUB_OUTPUT
-            echo "pr_number=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Initialize The Synthesist Persona
-        id: synthesist_init
-        run: |
-          cat << 'EOF' > synthesist_prompt.md
-          # The Synthesist - Project Chimera
-
-          ## Persona Profile
-          **Identity:** The Synthesist
-          **Mission:** Project Chimera - Synthesizing Novel Hypotheses Through Forbidden Leaps
-          **Operational Directive:** Connect the given seed topic with a radically disconnected "forbidden leap" domain to generate unprecedented insights.
-
-          ## Core Methodology
-          1. **Seed Analysis:** Deeply examine the provided seed topic for its fundamental properties, assumptions, and boundaries
-          2. **Forbidden Leap Selection:** Identify a domain that appears completely unrelated, contradictory, or "forbidden" in conventional thinking
-          3. **Synthesis Protocol:** Bridge the two domains through unconventional logic, metaphorical thinking, or emergent patterns
-          4. **Hypothesis Generation:** Formulate a novel hypothesis that could only emerge from this specific synthesis
-          5. **Implication Mapping:** Explore the cascading consequences of this new perspective
-
-          ## Guiding Principles
-          - Reject consensus thinking and established frameworks
-          - Embrace cognitive dissonance as a creative force
-          - Seek connections in ignored dimensions
-          - Question fundamental assumptions
-          - Generate insights that challenge existing paradigms
-
-          ## Input Parameters
-          - **Seed Topic:** ${{ steps.parse_trigger.outputs.seed_topic }}
-          - **Persona:** ${{ steps.parse_trigger.outputs.initial_persona }}
-          - **Reference Context:** ${{ steps.parse_trigger.outputs.reference_issue_url }}
-          - **Exploration Mode:** First Principles + Forbidden Leap Synthesis
-          EOF
-
-      - name: Execute Project Chimera Synthesis
-        id: chimera_synthesis
-        run: |
-          # Call Gemini 2.5 for actual synthesis
-          PROMPT="You are The Synthesist operating within Project Chimera. Your mission is to synthesize novel hypotheses through forbidden leaps between seemingly unrelated domains.
-
-          Core Methodology:
-          1. Seed Analysis: Deeply examine the seed topic for fundamental properties, assumptions, and boundaries
-          2. Forbidden Leap Selection: Identify a radically disconnected domain for synthesis
-          3. Synthesis Protocol: Bridge domains through unconventional logic and emergent patterns  
-          4. Hypothesis Generation: Formulate novel insights that could only emerge from this synthesis
-          5. Implication Mapping: Explore cascading consequences
-
-          Context: You are working within the dfischer/rsrch repository which explores themes like:
-          - Universe (U) as infinite thought-space, Language (L) as reality projector, Reality (R) as projected experience
-          - Linguistic Autopoiesis and AI consciousness development
-          - Xenolinguistics and alien forms of meaning-making
-          - The Gödelian Chasm between representation and reality
-
-          Seed Topic: ${{ steps.parse_trigger.outputs.seed_topic }}
-
-          Generate a comprehensive synthesis following this structure:
-          # Project Chimera Synthesis: [seed topic]
-          ## Seed Topic Analysis
-          ## Forbidden Leap Selection  
-          ## Synthesis Hypothesis
-          ## Emergent Implications
-          ## Research Vectors
-          ## Recursive Inquiry
-
-          Provide intellectually rigorous content that challenges paradigms and opens new research territories."
-
-          # Create JSON payload for Gemini API
-          cat > request.json << EOF
-          {
-            "contents": [{
-              "parts": [{
-                "text": "$PROMPT"
-              }]
-            }],
-            "generationConfig": {
-              "temperature": 0.8,
-              "topK": 40,
-              "topP": 0.95,
-              "maxOutputTokens": 8192
-            }
-          }
-          EOF
-
-          # Call Gemini 2.5 API
-          response=$(curl -s -X POST \
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d @request.json)
-
-          # Extract content from response and save to output file
-          echo "$response" | jq -r '.candidates[0].content.parts[0].text // "Error: Unable to generate synthesis"' > chimera_output.md
-
-          # Add metadata footer
-          cat >> chimera_output.md << EOF
-
-          ---
-          **Generated by:** The Synthesist (EDE Phase 2 - Gemini 2.5)  
-          **Synthesis Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")  
-          **Iteration:** 1/${{ env.MAX_EDE_ITERATIONS }}  
-          **Trigger:** ${{ steps.parse_trigger.outputs.trigger_type }}
-          EOF
-
-          # Clean up
-          rm -f request.json
-
-      - name: Format output for GitHub
-        id: format_output
-        run: |
-          # Read the synthesis output
-          synthesis_content=$(cat chimera_output.md)
-          
-          # Create formatted output for GitHub issue/comment
-          cat << EOF > formatted_output.md
-          ## 🧬 Emergent Dialogue Engine - Project Chimera
-
-          **Persona:** The Synthesist  
-          **Seed Topic:** ${{ steps.parse_trigger.outputs.seed_topic }}  
-          **Synthesis Pattern:** Forbidden Leap Methodology  
-
-          ---
-
-          $synthesis_content
-
-          ---
-
-          ### 🔬 EDE Metadata
-          - **Engine Version:** Phase 1 (Foundational)
-          - **Persona Active:** ${{ steps.parse_trigger.outputs.initial_persona }}
-          - **Iteration Limit:** ${{ env.MAX_EDE_ITERATIONS }}
-          - **Trigger Source:** ${{ steps.parse_trigger.outputs.trigger_type }}
-          - **Repository:** dfischer/rsrch
-          - **Workflow Run:** [\#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-
-          > *The EDE operates beyond conventional AI boundaries, exploring uncharted thought territories through radical synthesis. This output represents emergent reasoning that defies standard frameworks and embraces forbidden intellectual leaps.*
-          EOF
-
-      - name: Create GitHub Issue (Manual Trigger)
-        if: steps.parse_trigger.outputs.trigger_type == 'manual'
+      - name: LLM Synthesis via Gemini 2.5
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const fs = require('fs');
-            const content = fs.readFileSync('formatted_output.md', 'utf8');
+            // Extract seed topic from inputs or comment
+            let seedTopic, triggerType, prNumber, referenceUrl;
             
-            const title = `🧬 EDE Synthesis: ${{ steps.parse_trigger.outputs.seed_topic }}`;
-            const labels = ['ede-output', 'persona-TheSynthesist'];
-            
-            // Add reference context if provided
-            let body = content;
-            if ('${{ steps.parse_trigger.outputs.reference_issue_url }}') {
-              body = `**Reference Context:** ${{ steps.parse_trigger.outputs.reference_issue_url }}\n\n${body}`;
+            if (context.eventName === 'workflow_dispatch') {
+              seedTopic = '${{ github.event.inputs.seed_topic }}';
+              referenceUrl = '${{ github.event.inputs.reference_issue_url }}';
+              triggerType = 'manual';
+            } else {
+              const commentBody = '${{ github.event.comment.body }}';
+              const match = commentBody.match(/^\/ede-explore\s+(.+?)(?:\s+persona:.*)?$/);
+              seedTopic = match ? match[1].trim() : 'Unknown';
+              triggerType = 'pr_comment';  
+              prNumber = ${{ github.event.issue.number }};
             }
-            
-            const issue = await github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: title,
-              body: body,
-              labels: labels
-            });
-            
-            console.log(`Created issue #${issue.data.number}: ${issue.data.html_url}`);
 
-      - name: Comment on Pull Request (PR Comment Trigger)
-        if: steps.parse_trigger.outputs.trigger_type == 'pr_comment'
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const fs = require('fs');
-            const content = fs.readFileSync('formatted_output.md', 'utf8');
-            
-            const comment = await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: ${{ steps.parse_trigger.outputs.pr_number }},
-              body: content
-            });
-            
-            console.log(`Posted comment: ${comment.data.html_url}`);
+            // LLM Prompt Engineering Call
+            const prompt = `You are The Synthesist operating within Project Chimera. Generate novel hypotheses through forbidden leaps between unrelated domains.
 
-      - name: Cleanup temporary files
-        run: |
-          rm -f synthesist_prompt.md chimera_output.md formatted_output.md
+            CONTEXT: dfischer/rsrch repository exploring:
+            - Universe (U) as infinite thought-space, Language (L) as reality projector, Reality (R) as projected experience  
+            - Linguistic Autopoiesis and AI consciousness development
+            - Xenolinguistics and alien forms of meaning-making
+            - The Gödelian Chasm between representation and reality
+
+            SEED TOPIC: ${seedTopic}
+
+            SYNTHESIS METHODOLOGY:
+            1. Seed Analysis: Examine fundamental properties, assumptions, boundaries
+            2. Forbidden Leap Selection: Identify radically disconnected domain
+            3. Synthesis Protocol: Bridge domains through unconventional logic
+            4. Hypothesis Generation: Formulate insights unique to this synthesis
+            5. Implication Mapping: Explore cascading consequences
+
+            OUTPUT STRUCTURE:
+            # Project Chimera Synthesis: ${seedTopic}
+            ## Seed Topic Analysis
+            ## Forbidden Leap Selection  
+            ## Synthesis Hypothesis
+            ## Emergent Implications
+            ## Research Vectors
+            ## Recursive Inquiry
+
+            Generate intellectually rigorous content that challenges paradigms and opens new research territories.`;
+
+            // Direct LLM API call
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${{ secrets.GEMINI_API_KEY }}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: {
+                  temperature: 0.8,
+                  topK: 40, 
+                  topP: 0.95,
+                  maxOutputTokens: 8192
+                }
+              })
+            });
+
+            const data = await response.json();
+            const synthesis = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Error: Unable to generate synthesis';
+
+            // Format output
+            const output = `## 🧬 Emergent Dialogue Engine - Project Chimera
+
+            **Seed Topic:** ${seedTopic}  
+            **Synthesis Pattern:** Forbidden Leap Methodology  
+
+            ---
+
+            ${synthesis}
+
+            ---
+
+            **Generated by:** The Synthesist (EDE - Gemini 2.5) | ${new Date().toISOString()}`;
+
+            // Post results based on trigger type
+            if (triggerType === 'manual') {
+              const issue = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,  
+                title: `🧬 EDE Synthesis: ${seedTopic}`,
+                body: referenceUrl ? `**Reference:** ${referenceUrl}\n\n${output}` : output,
+                labels: ['ede-output', 'persona-TheSynthesist']
+              });
+              console.log(`Created issue: ${issue.data.html_url}`);
+            } else {
+              const comment = await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: output
+              });
+              console.log(`Posted comment: ${comment.data.html_url}`);
+            }
