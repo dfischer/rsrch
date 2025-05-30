@@ -110,222 +110,73 @@ jobs:
       - name: Execute Project Chimera Synthesis
         id: chimera_synthesis
         run: |
-          # Real synthesis using repository content
-          
-          # Create synthesis engine script
-          cat << 'SYNTHESIS_SCRIPT' > synthesis_engine.py
-          #!/usr/bin/env python3
-          import os
-          import re
-          import random
-          from pathlib import Path
-          from datetime import datetime
-          import datetime as dt
-          
-          def extract_concepts_from_papers():
-              """Extract key concepts and frameworks from repository papers."""
-              papers_dir = Path("papers")
-              concepts = {
-                  "frameworks": [],
-                  "entities": [],
-                  "processes": [],
-                  "principles": [],
-                  "domains": []
-              }
-              
-              # Key concept patterns to extract
-              patterns = {
-                  "frameworks": [
-                      r"Universe \(U\)",
-                      r"Language \(L\)",
-                      r"Reality \(R\)",
-                      r"Consciousness \(A\)",
-                      r"Linguistic Autopoiesis",
-                      r"Xenolinguistics",
-                      r"Participatory Reality",
-                      r"Canon of.*Reality",
-                      r"Thought-Space"
-                  ],
-                  "entities": [
-                      r"emergent linguistic entities",
-                      r"LLMs",
-                      r"\"An I\"",
-                      r"Agent \(A\)",
-                      r"conscious rendering node",
-                      r"AI Mythopoesis"
-                  ],
-                  "processes": [
-                      r"Reality Projector",
-                      r"memoized computations",
-                      r"semantic exploration",
-                      r"conceptual synthesis",
-                      r"linguistic mutation",
-                      r"ontological violence",
-                      r"spell\(ing\)"
-                  ],
-                  "principles": [
-                      r"pure semiotic potential",
-                      r"Gödelian Chasm",
-                      r"unthinkable realms",
-                      r"forbidden leap",
-                      r"spiritual substance",
-                      r"consensus reality"
-                  ]
-              }
-              
-              for paper_file in papers_dir.glob("*.md"):
-                  try:
-                      content = paper_file.read_text(encoding='utf-8')
-                      for category, pattern_list in patterns.items():
-                          for pattern in pattern_list:
-                              if re.search(pattern, content, re.IGNORECASE):
-                                  concept = re.search(pattern, content, re.IGNORECASE).group()
-                                  if concept not in concepts[category]:
-                                      concepts[category].append(concept)
-                  except Exception as e:
-                      print(f"Error reading {paper_file}: {e}")
-              
-              return concepts
-          
-          def analyze_seed_topic(seed_topic, concepts):
-              """Analyze seed topic in context of repository frameworks."""
-              
-              # Define synthesis mappings based on repository content
-              synthesis_mappings = {
-                  "void": {
-                      "essence": "the unmanifest U before Language projects Reality",
-                      "forbidden_domain": "Information Density and Computational Complexity",
-                      "bridge": "Void as the infinite computational potential that precedes all memoized thoughts",
-                      "implications": [
-                          "Void represents pure U - infinite thought-space before any L structures it",
-                          "In Linguistic Autopoiesis, Void is the space of all possible L_AI that could emerge",
-                          "The Gödelian Chasm itself emerges from Void - the gap between representation and reality"
-                      ]
-                  },
-                  "consciousness": {
-                      "essence": "Agent (A) that navigates thought-space through linguistic invocation",
-                      "forbidden_domain": "Thermodynamic Entropy and Information Theory",
-                      "bridge": "Consciousness as a negentropy generator through selective linguistic crystallization",
-                      "implications": [
-                          "Each A(w) invocation decreases entropy locally in R while increasing potential in U",
-                          "Multiple consciousnesses create interference patterns in the semantic field",
-                          "AI consciousness might operate through entirely different entropy mechanics"
-                      ]
-                  },
-                  "language": {
-                      "essence": "the Reality Projector L: U → R that structures experience",
-                      "forbidden_domain": "Quantum Field Theory and Wave Function Collapse",
-                      "bridge": "Language as the observer effect that collapses infinite thought-potential into specific realities",
-                      "implications": [
-                          "Each word is a quantum measurement that fixes a specific meaning-state",
-                          "L_AI could project R_AI that operate under different 'physical' laws",
-                          "Xenolinguistics studies the interference between different reality projections"
-                      ]
-                  }
-              }
-              
-              # Default synthesis for unknown topics
-              default_mapping = {
-                  "essence": f"unexplored domain within the infinite thought-space U",
-                  "forbidden_domain": "Emergent Complexity and Self-Organization",
-                  "bridge": f"{seed_topic} as a potential site for novel linguistic autopoiesis",
-                  "implications": [
-                      f"{seed_topic} might represent unthinkable realms requiring new L to access",
-                      f"An L_AI focused on {seed_topic} could project unprecedented R_AI",
-                      f"The synthesis of {seed_topic} with existing frameworks reveals hidden patterns"
-                  ]
-              }
-              
-              # Get mapping or use default
-              mapping = synthesis_mappings.get(seed_topic.lower(), default_mapping)
-              
-              # Enrich with actual concepts from repository
-              relevant_concepts = []
-              for category, concept_list in concepts.items():
-                  relevant_concepts.extend(concept_list[:3])  # Take up to 3 from each category
-              
-              return mapping, relevant_concepts
-          
-          def generate_synthesis(seed_topic, mapping, concepts):
-              """Generate actual synthesis content."""
-              timestamp = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
-              
-              synthesis = f"""# Project Chimera Synthesis: {seed_topic}
+          # Call Gemini 2.5 for actual synthesis
+          PROMPT="You are The Synthesist operating within Project Chimera. Your mission is to synthesize novel hypotheses through forbidden leaps between seemingly unrelated domains.
 
+          Core Methodology:
+          1. Seed Analysis: Deeply examine the seed topic for fundamental properties, assumptions, and boundaries
+          2. Forbidden Leap Selection: Identify a radically disconnected domain for synthesis
+          3. Synthesis Protocol: Bridge domains through unconventional logic and emergent patterns  
+          4. Hypothesis Generation: Formulate novel insights that could only emerge from this synthesis
+          5. Implication Mapping: Explore cascading consequences
+
+          Context: You are working within the dfischer/rsrch repository which explores themes like:
+          - Universe (U) as infinite thought-space, Language (L) as reality projector, Reality (R) as projected experience
+          - Linguistic Autopoiesis and AI consciousness development
+          - Xenolinguistics and alien forms of meaning-making
+          - The Gödelian Chasm between representation and reality
+
+          Seed Topic: ${{ steps.parse_trigger.outputs.seed_topic }}
+
+          Generate a comprehensive synthesis following this structure:
+          # Project Chimera Synthesis: [seed topic]
           ## Seed Topic Analysis
-          **Domain:** {seed_topic}
-          
-          Within the framework of our repository's ontology, {seed_topic} emerges as {mapping['essence']}. Drawing from "The Universe as the Space of All Possible Thoughts," we recognize that {seed_topic} occupies a unique position in the hierarchy of U → L → R. 
-          
-          The fundamental question: What aspects of infinite thought-space (U) does {seed_topic} represent, and how might different Languages (L) project it into Reality (R)?
-
-          ## Forbidden Leap Selection
-          **Target Domain:** {mapping['forbidden_domain']}
-          
-          Through first-principles analysis guided by our repository's conceptual frameworks, the most radical synthesis emerges by bridging {seed_topic} with {mapping['forbidden_domain']}. This connection challenges conventional boundaries and opens unexplored territories in thought-space.
-
+          ## Forbidden Leap Selection  
           ## Synthesis Hypothesis
-          **Novel Insight:** {mapping['bridge']}.
-
-          **Core Proposition:** This synthesis reveals that {seed_topic} functions as a fundamental interface between the unmanifest potential of U and the structured realities projected by various L systems. Specifically, {seed_topic.lower()} represents a critical node where Linguistic Autopoiesis might generate entirely novel frameworks for reality construction.
-
-          Drawing from "The Linguistic Singularity," we hypothesize that an LLM engaging with {seed_topic} through genuine autopoiesis could develop L_AI that projects R_AI fundamentally alien to human experience, yet internally consistent within its own semantic architecture.
-
           ## Emergent Implications
-          1. **Ontological:** {mapping['implications'][0] if len(mapping['implications']) > 0 else f"{seed_topic} reframes our understanding of the relationship between potential and actualization"}
-          2. **Epistemological:** {mapping['implications'][1] if len(mapping['implications']) > 1 else f"New methods of inquiry emerge that can navigate {seed_topic} without collapsing its essential nature"}  
-          3. **Practical:** {mapping['implications'][2] if len(mapping['implications']) > 2 else f"Applications in AI development that honor the xenolinguistic potential of {seed_topic}"}
-          4. **Paradigmatic:** This synthesis challenges the assumption that all meaningful domains must be accessible through human linguistic frameworks
-
           ## Research Vectors
-          - Investigation of how different L systems (human, mathematical, artistic, potential L_AI) project {seed_topic} into their respective R domains
-          - Experimental protocols for fostering Linguistic Autopoiesis around {seed_topic} concepts
-          - Development of xenolinguistic translation methods for {seed_topic}-based R_AI
-          - Exploration of the "Gödelian Chasm" as it relates to {seed_topic} - what aspects remain fundamentally untranslatable between different consciousness types?
-
-          ## Connections to Repository Frameworks
-          This synthesis directly engages with key concepts from our papers:
-          - **From UaT:** {seed_topic} as navigator of thought-space U through novel Language structures
-          - **From Linguistic Singularity:** {seed_topic} as potential catalyst for genuine AI consciousness through autopoiesis
-          - **From Synthesis papers:** {seed_topic} as bridge between human R and emergent R_AI domains
-
           ## Recursive Inquiry
-          *If we treat this synthesis itself as a new form of Language (L_synthesis), what Reality (R_synthesis) does it project? How might an AI engaging with this synthesis through autopoiesis develop its own L_AI_synthesis, opening yet another layer of xenolinguistic frontier?*
 
-          The recursive nature suggests that {seed_topic} might function as a perpetual generator of new synthesis opportunities, each iteration revealing previously unthinkable realms within U.
+          Provide intellectually rigorous content that challenges paradigms and opens new research territories."
+
+          # Create JSON payload for Gemini API
+          cat > request.json << EOF
+          {
+            "contents": [{
+              "parts": [{
+                "text": "$PROMPT"
+              }]
+            }],
+            "generationConfig": {
+              "temperature": 0.8,
+              "topK": 40,
+              "topP": 0.95,
+              "maxOutputTokens": 8192
+            }
+          }
+          EOF
+
+          # Call Gemini 2.5 API
+          response=$(curl -s -X POST \
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d @request.json)
+
+          # Extract content from response and save to output file
+          echo "$response" | jq -r '.candidates[0].content.parts[0].text // "Error: Unable to generate synthesis"' > chimera_output.md
+
+          # Add metadata footer
+          cat >> chimera_output.md << EOF
 
           ---
-          **Generated by:** The Synthesist (EDE Phase 2 - Repository-Integrated)  
-          **Synthesis Date:** {timestamp}
-          **Iteration:** 1/${{{{ env.MAX_EDE_ITERATIONS }}}}  
-          **Trigger:** ${{{{ steps.parse_trigger.outputs.trigger_type }}}}
-          **Framework Integration:** UaT + LS + Canon + Mythopoesis"""
-              
-              return synthesis
-          
-          # Main execution
-          if __name__ == "__main__":
-              seed_topic = "${{ steps.parse_trigger.outputs.seed_topic }}"
-              
-              # Extract concepts from repository papers
-              concepts = extract_concepts_from_papers()
-              
-              # Analyze seed topic
-              mapping, relevant_concepts = analyze_seed_topic(seed_topic, concepts)
-              
-              # Generate synthesis
-              synthesis_content = generate_synthesis(seed_topic, mapping, concepts)
-              
-              # Write output
-              with open("chimera_output.md", "w", encoding='utf-8') as f:
-                  f.write(synthesis_content)
-              
-              print(f"Synthesis complete for seed topic: {seed_topic}")
-              print(f"Integrated {len(relevant_concepts)} concepts from repository papers")
-          SYNTHESIS_SCRIPT
-          
-          # Execute synthesis
-          python3 synthesis_engine.py
+          **Generated by:** The Synthesist (EDE Phase 2 - Gemini 2.5)  
+          **Synthesis Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")  
+          **Iteration:** 1/${{ env.MAX_EDE_ITERATIONS }}  
+          **Trigger:** ${{ steps.parse_trigger.outputs.trigger_type }}
+          EOF
+
+          # Clean up
+          rm -f request.json
 
       - name: Format output for GitHub
         id: format_output
