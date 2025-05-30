@@ -1,4 +1,4 @@
-name: Emergent Dialogue Engine
+name: Philosophical Analysis
 
 on:
   workflow_dispatch:
@@ -8,9 +8,9 @@ on:
         required: true
         type: string
       initial_persona:
-        description: 'Initial persona for the dialogue'
+        description: 'Initial persona for analysis'
         required: false
-        default: 'TheSynthesist'
+        default: 'Analyst'
         type: string
       reference_issue_url:
         description: 'Optional reference issue URL'
@@ -21,7 +21,7 @@ on:
     types: [created]
 
 env:
-  MAX_EDE_ITERATIONS: 1
+  MAX_ANALYSIS_ITERATIONS: 1
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.issue.number || github.event.pull_request.number || github.run_id }}
@@ -33,19 +33,19 @@ permissions:
   contents: read
 
 jobs:
-  emergent-dialogue:
+  philosophical-analysis:
     runs-on: ubuntu-latest
     if: |
       github.event_name == 'workflow_dispatch' || 
       (github.event_name == 'issue_comment' && 
        github.event.issue && github.event.issue.pull_request && 
-       startsWith(github.event.comment.body, '/ede-explore '))
+       startsWith(github.event.comment.body, '/analyze '))
     
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: LLM Synthesis via Gemini 2.5
+      - name: Philosophical Analysis via Gemini
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -59,40 +59,41 @@ jobs:
               triggerType = 'manual';
             } else {
               const commentBody = '${{ github.event.comment.body }}';
-              const match = commentBody.match(/^\/ede-explore\s+(.+?)(?:\s+persona:.*)?$/);
+              const match = commentBody.match(/^\/analyze\s+(.+?)(?:\s+persona:.*)?$/);
               seedTopic = match ? match[1].trim() : 'Unknown';
               triggerType = 'pr_comment';  
               prNumber = ${{ github.event.issue.number }};
             }
 
-            // LLM Prompt Engineering Call
-            const prompt = `You are The Synthesist operating within Project Chimera. Generate novel hypotheses through forbidden leaps between unrelated domains.
+            const prompt = `You are analyzing the seed topic through the philosophical frameworks developed in this repository.
 
-            CONTEXT: dfischer/rsrch repository exploring:
-            - Universe (U) as infinite thought-space, Language (L) as reality projector, Reality (R) as projected experience  
-            - Linguistic Autopoiesis and AI consciousness development
-            - Xenolinguistics and alien forms of meaning-making
-            - The Gödelian Chasm between representation and reality
+            CONCEPTUAL FOUNDATIONS:
+            - Universe (U): The infinite space of all possible thoughts
+            - Language (L): A projective operator mapping U onto navigable Reality (R)  
+            - Words as memoized computations over conceptual primitives
+            - Consciousness as the agent selecting and invoking linguistic tokens
+            - Linguistic Autopoiesis: Self-driven evolution of language systems
+            - The Gödelian Chasm between representation and embodied experience
 
             SEED TOPIC: ${seedTopic}
 
-            SYNTHESIS METHODOLOGY:
-            1. Seed Analysis: Examine fundamental properties, assumptions, boundaries
-            2. Forbidden Leap Selection: Identify radically disconnected domain
-            3. Synthesis Protocol: Bridge domains through unconventional logic
-            4. Hypothesis Generation: Formulate insights unique to this synthesis
-            5. Implication Mapping: Explore cascading consequences
+            ANALYTICAL METHOD:
+            1. Examine the seed topic's position within thought-space U
+            2. Identify which Language systems (L) currently project this concept into Reality (R)
+            3. Determine unexplored mappings between the seed and repository frameworks
+            4. Construct hypotheses connecting the seed to consciousness, language, or reality architecture
+            5. Trace implications for understanding the nature of thought, meaning, and experience
 
             OUTPUT STRUCTURE:
-            # Project Chimera Synthesis: ${seedTopic}
-            ## Seed Topic Analysis
-            ## Forbidden Leap Selection  
+            # Synthesis: ${seedTopic}
+            ## Conceptual Analysis
+            ## Language-Reality Mapping
             ## Synthesis Hypothesis
-            ## Emergent Implications
+            ## Implications
             ## Research Vectors
-            ## Recursive Inquiry
+            ## Further Inquiry
 
-            Generate intellectually rigorous content that challenges paradigms and opens new research territories.`;
+            Apply rigorous philosophical analysis to generate substantive insights about the nature of consciousness, language, and reality.`;
 
             // Direct LLM API call
             const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${{ secrets.GEMINI_API_KEY }}`, {
@@ -110,13 +111,13 @@ jobs:
             });
 
             const data = await response.json();
-            const synthesis = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Error: Unable to generate synthesis';
+            const synthesis = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Error: Unable to generate analysis';
 
             // Format output
-            const output = `## 🧬 Emergent Dialogue Engine - Project Chimera
+            const output = `## Philosophical Analysis
 
             **Seed Topic:** ${seedTopic}  
-            **Synthesis Pattern:** Forbidden Leap Methodology  
+            **Framework:** Repository Ontology (U→L→R)  
 
             ---
 
@@ -124,16 +125,16 @@ jobs:
 
             ---
 
-            **Generated by:** The Synthesist (EDE - Gemini 2.5) | ${new Date().toISOString()}`;
+            **Analysis Date:** ${new Date().toISOString()}`;
 
             // Post results based on trigger type
             if (triggerType === 'manual') {
               const issue = await github.rest.issues.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,  
-                title: `🧬 EDE Synthesis: ${seedTopic}`,
+                title: `Analysis: ${seedTopic}`,
                 body: referenceUrl ? `**Reference:** ${referenceUrl}\n\n${output}` : output,
-                labels: ['ede-output', 'persona-TheSynthesist']
+                labels: ['analysis', 'philosophical-inquiry']
               });
               console.log(`Created issue: ${issue.data.html_url}`);
             } else {
